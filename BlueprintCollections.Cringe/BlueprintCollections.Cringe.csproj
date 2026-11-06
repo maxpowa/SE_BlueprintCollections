@@ -1,0 +1,82 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- CringeLauncher package project. It compiles the same sources as the Pulsar project
+       (..\BlueprintCollections) and packs them as a CringePlugin NuGet package. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <UseWindowsForms>true</UseWindowsForms>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <RestoreAdditionalProjectSources>https://ng.zznty.ru/v3/index.json</RestoreAdditionalProjectSources>
+    <EnableDynamicLoading>true</EnableDynamicLoading>
+    <NoWarn>$(NoWarn);MSB3246;NU1701;CS0618</NoWarn>
+
+    <!-- Skip the assembly attributes declared in Plugin.cs, the SDK generates them. -->
+    <DefineConstants>$(DefineConstants);LOCAL_BUILD</DefineConstants>
+
+    <PackageType>CringePlugin</PackageType>
+    <Authors>BlueprintCollections</Authors>
+    <PackageId>Plugin.SE_BlueprintCollections</PackageId>
+    <AssemblyName>Plugin.SE_BlueprintCollections</AssemblyName>
+    <RootNamespace>BlueprintCollections</RootNamespace>
+    <Title>Workshop Collection Filter</Title>
+    <Description>Filter the blueprints screen to the contents of a Steam Workshop collection.
+
+The collection dropdown lists collections owned by the player, collections the player is subscribed to, and collections the player has favorited. Blueprints in the selected collection that are not subscribed are listed too and are downloaded on demand when opened or copied. Their primary Steam Workshop image is shown until they are downloaded.
+
+Preview images are resized to fit the game's 242x128 preview slot with their original aspect ratio and cached; the cache limit is configurable in the plugin settings (default 10 MB).
+
+Selecting "All Subscribed Items" turns the filter off. The plugin only reads Workshop metadata and never subscribes, unsubscribes or publishes anything.</Description>
+    <LangVersion>preview</LangVersion>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CringePlugins" Version="*" ExcludeAssets="runtime; native" />
+    <PackageReference Include="CringePlugins.MSBuild" Version="*" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The plugin sources live in the Pulsar project directory. -->
+    <Compile Include="..\BlueprintCollections\**\*.cs"
+             Exclude="..\BlueprintCollections\bin\**\*.cs;..\BlueprintCollections\obj\**\*.cs">
+      <Link>Source\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="icon.png" Pack="true" PackagePath="" />
+    <None Include="..\README.md" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+  <!-- Copy the built plugin and its companion files into the CringeLauncher plugin folder.
+       Override CringeLauncherPluginsDir to deploy somewhere else. -->
+  <PropertyGroup>
+    <CringeLauncherPluginsDir Condition="'$(CringeLauncherPluginsDir)' == ''">$(APPDATA)\CringeLauncher\plugins</CringeLauncherPluginsDir>
+    <CringeLauncherPluginDir Condition="'$(CringeLauncherPluginDir)' == ''">$(CringeLauncherPluginsDir)\$(AssemblyName)</CringeLauncherPluginDir>
+  </PropertyGroup>
+
+  <Target Name="DeployToCringeLauncher" AfterTargets="Build"
+          Condition="'$(OS)' == 'Windows_NT' and '$(APPDATA)' != '' and '$(CringeLauncherPluginDir)' != ''">
+    <ItemGroup>
+      <_CringeLauncherPayload Include="$(TargetPath)" />
+      <_CringeLauncherPayload Include="$(TargetDir)$(TargetName).pdb" Condition="Exists('$(TargetDir)$(TargetName).pdb')" />
+      <_CringeLauncherPayload Include="$(TargetDir)$(TargetName).deps.json" Condition="Exists('$(TargetDir)$(TargetName).deps.json')" />
+      <_CringeLauncherPayload Include="$(TargetDir)$(TargetName).runtimeconfig.json" Condition="Exists('$(TargetDir)$(TargetName).runtimeconfig.json')" />
+      <_CringeLauncherPayload Include="$(TargetDir)$(TargetName).xml" Condition="Exists('$(TargetDir)$(TargetName).xml')" />
+      <_CringeLauncherPayload Include="@(ReferenceCopyLocalPaths)" />
+    </ItemGroup>
+
+    <MakeDir Directories="$(CringeLauncherPluginDir)" />
+    <Copy SourceFiles="@(_CringeLauncherPayload)"
+          DestinationFiles="@(_CringeLauncherPayload->'$(CringeLauncherPluginDir)\%(DestinationSubDirectory)%(Filename)%(Extension)')"
+          SkipUnchangedFiles="true"
+          ContinueOnError="WarnAndContinue" />
+    <Message Importance="high" Text="Deployed $(AssemblyName) to $(CringeLauncherPluginDir)" />
+  </Target>
+
+</Project>

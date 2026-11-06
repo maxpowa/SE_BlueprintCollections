@@ -1,0 +1,37 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlueprintCollections", "BlueprintCollections\BlueprintCollections.csproj", "{95F61973-8531-4C4A-BA6A-C138511DC65B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlueprintCollections.Cringe", "BlueprintCollections.Cringe\BlueprintCollections.Cringe.csproj", "{BEB5F107-3145-4E6A-96D5-B06070E5D005}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4A3A8F5C-2C7B-4D5B-8C2A-7B0D8E5F1A33}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		README.md = README.md
+		Directory.Build.props = Directory.Build.props
+		Version.Build.props = Version.Build.props
+		BlueprintCollections.xml = BlueprintCollections.xml
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{95F61973-8531-4C4A-BA6A-C138511DC65B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95F61973-8531-4C4A-BA6A-C138511DC65B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95F61973-8531-4C4A-BA6A-C138511DC65B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95F61973-8531-4C4A-BA6A-C138511DC65B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BEB5F107-3145-4E6A-96D5-B06070E5D005}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BEB5F107-3145-4E6A-96D5-B06070E5D005}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BEB5F107-3145-4E6A-96D5-B06070E5D005}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BEB5F107-3145-4E6A-96D5-B06070E5D005}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
