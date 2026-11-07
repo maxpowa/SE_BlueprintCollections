@@ -336,6 +336,10 @@ internal static class CollectionFilterUi
 
     private static void Populate(MyGuiControlCombobox combo)
     {
+        // If the selected collection was marked as ignored, fall back to the unfiltered view.
+        // Continue with the new selection: during Attach the combo is not part of the
+        // attachment list yet, so it cannot rely on the Changed event to repopulate it.
+        WorkshopCollectionService.ClearIgnoredSelectionIfNeeded();
         ulong selectedId = WorkshopCollectionService.SelectedId;
 
         combo.ClearItems();
@@ -344,6 +348,8 @@ internal static class CollectionFilterUi
         int order = 1;
         foreach (WorkshopCollection collection in WorkshopCollectionService.Collections)
         {
+            if (WorkshopCollectionService.IsIgnoredTitle(collection.Title)) continue;
+
             combo.AddItem(unchecked((long)collection.Id), collection.DisplayName, order++, collection.ToolTip, sort: false);
         }
 

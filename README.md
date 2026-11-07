@@ -14,6 +14,9 @@ The collection dropdown lists:
 Collections that appear in more than one of those lists are shown once and marked accordingly.
 The dropdown is sorted alphabetically by collection name.
 
+Collections whose title contains `[WCF-IGNORE]` are hidden from the picker. If one of them was
+selected previously, the filter falls back to **All Subscribed Items**.
+
 ## Usage
 
 1. Open the Blueprints screen (F10, or the blueprint button in the main menu).

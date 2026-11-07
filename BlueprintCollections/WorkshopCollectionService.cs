@@ -103,6 +103,7 @@ public static class WorkshopCollectionService
     private const int ResultsPerPage = 50;      // kNumUGCResultsPerPage
     private const int DetailsBatchSize = 100;   // max IDs accepted by CreateQueryUGCDetailsRequest
     private const string SteamServiceName = "Steam";
+    private const string IgnoreMarker = "[WCF-IGNORE]";
 
     private static readonly List<WorkshopCollection> CollectionsInternal = new List<WorkshopCollection>();
     private static readonly HashSet<ulong> SelectedMembers = new HashSet<ulong>();
@@ -293,6 +294,42 @@ public static class WorkshopCollectionService
         {
             EnsureSelectedMembersLoaded();
         }
+    }
+
+    /// <summary>
+    /// Collections with this marker in their title are hidden from the picker and are not
+    /// used as a filter.
+    /// </summary>
+    public static bool IsIgnoredTitle(string title)
+    {
+        return !string.IsNullOrEmpty(title) &&
+               title.IndexOf(IgnoreMarker, StringComparison.OrdinalIgnoreCase) >= 0;
+    }
+
+    /// <summary>Whether the collection is marked to be hidden from the picker.</summary>
+    public static bool IsIgnoredCollection(ulong collectionId)
+    {
+        if (collectionId == 0) return false;
+
+        WorkshopCollection collection = Find(collectionId);
+        if (collection != null) return IsIgnoredTitle(collection.Title);
+
+        // Ignored collections are not kept in the list, so the cached title is the only
+        // remaining source for the currently selected one.
+        return collectionId == m_selectedId &&
+               IsIgnoredTitle(Config.Current.SelectedCollectionTitle);
+    }
+
+    /// <summary>
+    /// Turns the filter off when the selected collection has been marked as ignored. Returns
+    /// true when the selection was cleared.
+    /// </summary>
+    public static bool ClearIgnoredSelectionIfNeeded()
+    {
+        if (m_selectedId == 0 || !IsIgnoredCollection(m_selectedId)) return false;
+
+        Select(0);
+        return true;
     }
 
     /// <summary>
@@ -1400,6 +1437,21 @@ public static class WorkshopCollectionService
     {
         if (id == 0) return;
 
+        if (IsIgnoredTitle(title))
+        {
+            // Keep ignored collections out of the picker. If one is selected, remember its
+            // title so the UI can turn the filter off; the selection is cleared from the UI.
+            WorkshopCollection ignored = Find(id);
+            if (ignored != null) CollectionsInternal.Remove(ignored);
+
+            if (id == m_selectedId)
+            {
+                Config.Current.SelectedCollectionTitle = title;
+                Config.Save();
+            }
+            return;
+        }
+
         WorkshopCollection collection = Find(id);
         if (collection == null)
         {
@@ -1453,7 +1505,9 @@ public static class WorkshopCollectionService
         });
 
         MyLog.Default.WriteLine($"{Plugin.Name}: Loaded {CollectionsInternal.Count} workshop collection(s).");
-        RaiseChanged();
+
+        // Select() raises Changed itself when it clears an ignored selection.
+        if (!ClearIgnoredSelectionIfNeeded()) RaiseChanged();
     }
 
     private static void ScheduleRetry()
