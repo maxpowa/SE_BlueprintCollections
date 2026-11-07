@@ -1484,6 +1484,11 @@ public static class WorkshopCollectionService
 
         CollectionsInternal.Sort((a, b) =>
         {
+            // Owned collections first, then subscribed, then favorite-only;
+            // alphabetically inside each group.
+            if (a.Owned != b.Owned) return a.Owned ? -1 : 1;
+            if (a.Subscribed != b.Subscribed) return a.Subscribed ? -1 : 1;
+
             int result = string.Compare(
                 a.Title, b.Title, StringComparison.CurrentCultureIgnoreCase);
             return result != 0 ? result : a.Id.CompareTo(b.Id);
