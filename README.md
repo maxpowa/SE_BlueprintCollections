@@ -11,8 +11,8 @@ The collection dropdown lists:
 - collections the player is **subscribed** to, and
 - collections the player has **favorited**.
 
-Collections that appear in more than one of those lists are shown once and marked accordingly.
-The dropdown is sorted alphabetically by collection name.
+Collections that appear in more than one of those lists are shown once; the sources are listed
+in the item's tooltip. The dropdown is sorted alphabetically by collection name.
 
 Collections whose title contains `[WCF-IGNORE]` are hidden from the picker. If one of them was
 selected previously, the filter falls back to **All Subscribed Items**.

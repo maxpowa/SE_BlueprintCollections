@@ -30,21 +30,6 @@ public sealed class WorkshopCollection
         Title = title ?? string.Empty;
     }
 
-    public string DisplayName
-    {
-        get
-        {
-            if (Owned && Subscribed && Favorited) return $"{Title} (owned, subscribed, favorited)";
-            if (Owned && Subscribed) return $"{Title} (owned, subscribed)";
-            if (Owned && Favorited) return $"{Title} (owned, favorited)";
-            if (Subscribed && Favorited) return $"{Title} (subscribed, favorited)";
-            if (Owned) return $"{Title} (owned)";
-            if (Subscribed) return $"{Title} (subscribed)";
-            if (Favorited) return $"{Title} (favorited)";
-            return Title;
-        }
-    }
-
     public string ToolTip
     {
         get

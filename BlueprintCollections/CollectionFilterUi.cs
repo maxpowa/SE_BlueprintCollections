@@ -350,7 +350,7 @@ internal static class CollectionFilterUi
         {
             if (WorkshopCollectionService.IsIgnoredTitle(collection.Title)) continue;
 
-            combo.AddItem(unchecked((long)collection.Id), collection.DisplayName, order++, collection.ToolTip, sort: false);
+            combo.AddItem(unchecked((long)collection.Id), collection.Title, order++, collection.ToolTip, sort: false);
         }
 
         // Keep the selected collection selectable even if it is not in the list yet
