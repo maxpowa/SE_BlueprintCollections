@@ -18,6 +18,9 @@ collections, alphabetically within each group.
 Collections whose title contains `[WCF-IGNORE]` are hidden from the picker. If one of them was
 selected previously, the filter falls back to **All Subscribed Items**.
 
+While the picker is open, typing a letter or digit jumps to the next collection whose name starts
+with it; repeating the key cycles through the matches. Enter or a click still confirms the choice.
+
 ## Usage
 
 1. Open the Blueprints screen (F10, or the blueprint button in the main menu).

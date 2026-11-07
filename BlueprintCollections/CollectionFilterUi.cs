@@ -53,7 +53,7 @@ internal static class CollectionFilterUi
         float listBaseY = list != null ? list.Position.Y : searchBase.Y + 0.032f;
         float listBaseHeight = list != null ? list.Size.Y : 0.55f;
 
-        var combo = new MyGuiControlCombobox(
+        var combo = new CollectionFilterCombobox(
             position: searchBase,
             size: new Vector2(comboWidth, 0.03f),
             openAreaItemsCount: 12,
