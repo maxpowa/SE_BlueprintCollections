@@ -97,8 +97,8 @@ internal sealed class CollectionFilterCombobox : MyGuiControlCombobox
 
     /// <summary>
     /// Matches the first letter of a leading faction tag ("[SDX] Cool ships" for S) as well as
-    /// the first letter after the tag ("... Cool ships" for C). The brackets themselves never
-    /// need to be typed.
+    /// the first letter after the tag ("... Cool ships" for C). The brackets themselves are
+    /// ignored for matching; the tag content is not removed.
     /// </summary>
     private static bool StartsWithTypedCharacter(StringBuilder value, char typed)
     {

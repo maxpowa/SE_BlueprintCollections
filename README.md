@@ -19,9 +19,10 @@ Collections whose title contains `[WCF-IGNORE]` are hidden from the picker. If o
 selected previously, the filter falls back to **All Subscribed Items**.
 
 While the picker is open, typing a letter or digit jumps to the next collection whose name starts
-with it. Leading `[faction]` tags are skipped, so both the tag's first letter and the first letter
-after it work (`[SDX] Cool ships` matches `S` and `C`). Repeating the key cycles through the
-matches. Enter or a click still confirms the choice.
+with it. Leading square brackets are ignored for matching, so both the faction tag's first letter
+and the first letter after it work (`[SDX] Cool ships` matches `S` and `C`). The tag itself is not
+removed from matching. Repeating the key cycles through the matches. Enter or a click still
+confirms the choice.
 
 ## Usage
 
