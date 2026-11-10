@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Text;
 using Sandbox;
 using Sandbox.Graphics.GUI;
 using VRage.Audio;
@@ -85,13 +86,56 @@ internal sealed class CollectionFilterCombobox : MyGuiControlCombobox
             MyGuiControlCombobox.Item item = GetItemByIndex(index);
             if (item?.Value == null || item.Value.Length == 0) continue;
 
-            if (char.ToUpperInvariant(item.Value[0]) == char.ToUpperInvariant(typed))
+            if (StartsWithTypedCharacter(item.Value, typed))
             {
                 return index;
             }
         }
 
         return -1;
+    }
+
+    /// <summary>
+    /// Matches the first letter of a leading faction tag ("[SDX] Cool ships" for S) as well as
+    /// the first letter after the tag ("... Cool ships" for C). The brackets themselves never
+    /// need to be typed.
+    /// </summary>
+    private static bool StartsWithTypedCharacter(StringBuilder value, char typed)
+    {
+        if (value == null || value.Length == 0) return false;
+
+        char target = char.ToUpperInvariant(typed);
+
+        int index = 0;
+        while (index < value.Length && char.IsWhiteSpace(value[index])) index++;
+
+        // First alphanumeric character, including one inside a leading [tag].
+        int first = index;
+        while (first < value.Length && !char.IsLetterOrDigit(value[first])) first++;
+        if (first < value.Length && char.ToUpperInvariant(value[first]) == target) return true;
+
+        // First alphanumeric character after all leading [tag] groups and punctuation.
+        while (true)
+        {
+            while (index < value.Length && char.IsWhiteSpace(value[index])) index++;
+            if (index >= value.Length || value[index] != '[') break;
+
+            int close = -1;
+            for (int i = index + 1; i < value.Length; i++)
+            {
+                if (value[i] == ']')
+                {
+                    close = i;
+                    break;
+                }
+            }
+
+            if (close < 0) break;
+            index = close + 1;
+        }
+
+        while (index < value.Length && !char.IsLetterOrDigit(value[index])) index++;
+        return index < value.Length && char.ToUpperInvariant(value[index]) == target;
     }
 
     private static char GetTypedCharacter()
