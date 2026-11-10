@@ -122,6 +122,7 @@ public static class WorkshopCollectionService
     private static ulong m_selectedId;
     private static bool m_membersLoading;
     private static bool m_membersLoaded;
+    private static bool m_membersLoadFailed;
     private static ulong m_membersRequestId;
 
     private static int m_filterVersion;
@@ -188,6 +189,8 @@ public static class WorkshopCollectionService
         if (m_membersLoading && (now - m_membersLoadStartedUtc).TotalSeconds > 45)
         {
             m_membersLoading = false;
+            m_membersLoadFailed = true;
+            RaiseChanged();
         }
 
         if (m_loaded && (m_selectedId == 0 || m_membersLoaded)) return;
@@ -323,7 +326,11 @@ public static class WorkshopCollectionService
     public static bool IsItemVisible(ulong itemId)
     {
         if (m_selectedId == 0) return true;
-        if (!m_membersLoaded) return false;
+
+        // While the member list is loading, or if it could not be loaded, keep the subscribed
+        // workshop items visible instead of leaving the screen empty.
+        if (!m_membersLoaded) return true;
+
         return SelectedMembers.Contains(itemId);
     }
 
@@ -338,6 +345,12 @@ public static class WorkshopCollectionService
             }
         }
     }
+
+    /// <summary>
+    /// True when the selected collection's members exist but could not be loaded. The list
+    /// then falls back to showing the subscribed workshop items.
+    /// </summary>
+    public static bool MembersUnavailable => m_selectedId != 0 && m_membersLoadFailed;
 
     /// <summary>Whether the item is a blueprint member the player is not subscribed to.</summary>
     public static bool IsUnsubscribedMember(ulong itemId)
@@ -482,6 +495,7 @@ public static class WorkshopCollectionService
         lock (MemberLock)
         {
             m_membersLoaded = false;
+            m_membersLoadFailed = false;
             Members.Clear();
             BlueprintMembersInternal.Clear();
             UnsubscribedMemberIds.Clear();
@@ -494,6 +508,7 @@ public static class WorkshopCollectionService
         lock (MemberLock)
         {
             m_membersLoaded = false;
+            m_membersLoadFailed = false;
             Members.Clear();
             BlueprintMembersInternal.Clear();
             UnsubscribedMemberIds.Clear();
@@ -1113,12 +1128,16 @@ public static class WorkshopCollectionService
             {
                 CollectionFilterUi.RefreshThumbnail(ids[i], path);
             }
-
-            EnforcePreviewCacheLimit();
         }
         finally
         {
             PumpPreviewQueue();
+        }
+
+        // Trim once the batch has drained instead of rescanning the folder for every image.
+        if (PreviewQueue.Count == 0 && m_activePreviewDownloads == 0)
+        {
+            EnforcePreviewCacheLimit();
         }
     }
 
@@ -1275,6 +1294,7 @@ public static class WorkshopCollectionService
         lock (MemberLock)
         {
             m_membersLoaded = true;
+            m_membersLoadFailed = false;
 
             BlueprintMembersInternal.Sort(
                 (a, b) => string.Compare(a.Title, b.Title, StringComparison.CurrentCultureIgnoreCase));
@@ -1302,11 +1322,19 @@ public static class WorkshopCollectionService
     {
         if (collectionId != m_selectedId || collectionId != m_membersRequestId) return;
 
+        bool wasUnavailable = m_membersLoadFailed;
         m_membersLoading = false;
         ResetMemberData();
+        m_membersLoadFailed = true;
         m_filterVersion++;
         ScheduleRetry();
-        MyLog.Default.WriteLine($"{Plugin.Name}: Could not load members of collection {collectionId}.");
+
+        // Log once per failure episode; the retries would otherwise repeat this every 10 s.
+        if (!wasUnavailable)
+        {
+            MyLog.Default.WriteLine($"{Plugin.Name}: Could not load members of collection {collectionId}.");
+        }
+
         RaiseChanged();
     }
 
@@ -1324,6 +1352,7 @@ public static class WorkshopCollectionService
         lock (MemberLock)
         {
             m_membersLoaded = true;
+            m_membersLoadFailed = false;
             Members.Clear();
             BlueprintMembersInternal.Clear();
             UnsubscribedMemberIds.Clear();

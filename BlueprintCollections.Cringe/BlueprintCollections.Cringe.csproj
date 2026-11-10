@@ -29,15 +29,17 @@ The collection dropdown lists collections owned by the player, collections the p
 
 Preview images are resized to fit the game's 242x128 preview slot with their original aspect ratio and cached; the cache limit is configurable in the plugin settings (default 10 MB).
 
-Selecting "All Subscribed Items" turns the filter off. The plugin only reads Workshop metadata and never subscribes, unsubscribes or publishes anything.</Description>
+Selecting "All Subscribed Items" turns the filter off. The plugin only reads Workshop metadata and never subscribes, unsubscribes or publishes anything.
+
+The plugin also refreshes the detail action buttons immediately after a blueprint is selected and re-enables the blueprint list after a thumbnail download, fixing two vanilla UI stalls.</Description>
     <LangVersion>preview</LangVersion>
     <PackageIcon>icon.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CringePlugins" Version="*" ExcludeAssets="runtime; native" />
-    <PackageReference Include="CringePlugins.MSBuild" Version="*" PrivateAssets="All" />
+    <PackageReference Include="CringePlugins" Version="0.4.7" ExcludeAssets="runtime; native" />
+    <PackageReference Include="CringePlugins.MSBuild" Version="1.0.2" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>

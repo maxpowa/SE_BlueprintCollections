@@ -350,7 +350,18 @@ internal static class CollectionFilterUi
         {
             if (WorkshopCollectionService.IsIgnoredTitle(collection.Title)) continue;
 
-            combo.AddItem(unchecked((long)collection.Id), collection.Title, order++, collection.ToolTip, sort: false);
+            bool unavailable =
+                collection.Id == selectedId && WorkshopCollectionService.MembersUnavailable;
+
+            string name = unavailable
+                ? collection.Title + " (unavailable)"
+                : collection.Title;
+            string toolTip = unavailable
+                ? collection.ToolTip +
+                  "\nCollection members could not be loaded; showing all subscribed items."
+                : collection.ToolTip;
+
+            combo.AddItem(unchecked((long)collection.Id), name, order++, toolTip, sort: false);
         }
 
         // Keep the selected collection selectable even if it is not in the list yet

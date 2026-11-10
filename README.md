@@ -76,6 +76,10 @@ itself has no separate options button.
   get its thumbnail. Not subscribed members use a resized copy of the primary Steam Workshop
   image, fitted to the blueprint screen's 242×128 preview slot with the original aspect ratio
   (about 6 KB instead of 0.5–1 MB), downloaded once and cached locally.
+- `BlueprintScreenSelectItemPatch` refreshes the detail action buttons immediately after a
+  selection, and `BlueprintScreenThumbnailDownloadedPatch` re-enables the blueprint list after a
+  thumbnail download. These fix two vanilla UI stalls and apply whether or not a collection
+  filter is active.
 - `LoadWorkshopPrefabPatch` lets the game's prefab loader resolve the metadata of a detached
   item. Without it, an on-demand blueprint would download but never load.
 - `BlueprintScreenApplyFilteringPatch` runs after the game's own `ApplyFiltering()` and hides

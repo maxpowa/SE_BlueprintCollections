@@ -24,7 +24,9 @@ Blueprints in the collection that the player is not subscribed to are listed too
 
 Preview images are resized to fit the game's 242x128 preview slot with their original aspect ratio and cached; the cache limit is configurable in the plugin settings (default 10 MB). The plugin never subscribes, unsubscribes or publishes anything.
 
-Selecting "All Subscribed Items" turns the filter off. The selection is remembered between game sessions, and the screen's Refresh button reloads the collections.</Description>
+Selecting "All Subscribed Items" turns the filter off. The selection is remembered between game sessions, and the screen's Refresh button reloads the collections.
+
+The plugin also refreshes the detail action buttons immediately after a blueprint is selected and re-enables the blueprint list after a thumbnail download, fixing two vanilla UI stalls.</Description>
 
     <!-- Only source code in the Directory entries listed in SourceDirectories is compiled. Exclude any test projects or similar. -->
     <SourceDirectories>
